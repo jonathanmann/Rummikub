@@ -37,7 +37,20 @@ class Rummikub:
 
     def validate_block(self,block):
         """Validate block of tiles as straight flush or as same value color combination"""
-        pass
+        if len(block) < 3:
+            return False
+        vals = []
+        colors = []
+        for tile in block:
+            colors.append(tile.color)
+            vals.append(tile.value)
+        if len(set(colors)) > 1:
+            return len(set(vals)) == 1 and len(vals) == len(set(colors))
+        vals.sort()
+        for i in range(len(vals) - 1):
+            if vals[i] + 1 <> vals[i + 1]:
+                return False
+        return True
 
     def validate_state(self,state):
         """Validate game state by checking all public blocks"""
@@ -57,11 +70,14 @@ class Rummikub:
         self.tiles = set(tiles)
 
 def main():
-    g = Rummikub()
-    g.deal()
-    print g.player_hands['1']
-    print len(g.pool)
-    print len(g.tiles)
+    t = False
+    while not t:
+        g = Rummikub()
+        g.deal()
+        #p = random.sample(g.player_hands['1'],3)
+        p = random.sample(g.player_hands['1'],4)
+        t = g.validate_block(p)
+    print p
     
 if __name__ == '__main__':
     main()
