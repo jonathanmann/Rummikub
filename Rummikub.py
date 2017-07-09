@@ -3,6 +3,7 @@ from collections import namedtuple
 import random
 
 Tile = namedtuple('Tile','value color instance')
+Block = namedtuple('Block','type tiles')
 
 class Rummikub:
     """
@@ -20,6 +21,7 @@ class Rummikub:
         self.players = players
         self.make_tiles()
         self.pool = self.tiles.copy()
+        self.public_space = []
 
     def deal(self,tile_count=14):
         """Deal the appropriate number of tiles to each player"""
@@ -52,6 +54,10 @@ class Rummikub:
                 return False
         return True
 
+    def greedy_play(self,player):
+        for block in self.public_space:
+            print block
+
     def validate_state(self,state):
         """Validate game state by checking all public blocks"""
         pass
@@ -75,9 +81,9 @@ def main():
         g = Rummikub()
         g.deal()
         #p = random.sample(g.player_hands['1'],3)
-        p = random.sample(g.player_hands['1'],4)
-        t = g.validate_block(p)
-    print p
+        block = Block('straight',random.sample(g.player_hands['1'],3))
+        t = g.validate_block(block[1])
+    print block
     
 if __name__ == '__main__':
     main()
