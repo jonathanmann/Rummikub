@@ -1,44 +1,89 @@
 #!/usr/bin/env python
 from collections import namedtuple
 import random
+from itertools import combinations
 
-Tile = namedtuple('Tile','value color instance')
-Block = namedtuple('Block','type tiles')
+Tile = namedtuple('Tile','value color')
 
 class Rummikub:
     """
     Implementation of Rummikub for testing strategy bots
 
     Attributes:
-        colors (set): colors for a tile
-        values (set) numbers for a tile
+        colors (set): possible colors for a tile
+        values (set): possible numbers for a tile
         instances (int): number of tile instances
-        tiles (set): valid tiles
-        pool (set): available tiles
+        tiles (list): available tiles
         player_hands (dict): tile sets in each player's possession
     """
     def __init__(self,players=['1','2']):
         self.players = players
+        random.shuffle(self.players)
         self.make_tiles()
-        self.pool = self.tiles.copy()
         self.public_space = []
 
     def deal(self,tile_count=14):
         """Deal the appropriate number of tiles to each player"""
         self.player_hands = {}
         for p in self.players:
-            hand = set(random.sample(self.pool,tile_count))
-            self.pool = self.pool.difference(hand)
+            hand = self.tiles[-tile_count:]
+            self.tiles = self.tiles[:-tile_count]
             self.player_hands[p] = hand
 
     def draw(self,player):
         """Draw a tile if unable or unwilling to play"""
-        tile = random.sample(self.pool,1)[0]
-        self.player_hands[player].add(tile)
-        self.pool.remove(tile)
+        tile = self.tiles.pop()
+        self.player_hands[player].append(tile)
+
+    def possible_groups(self,tiles):
+        """Indentify possible groups from available tiles"""
+        blocks = []
+        groups = {}
+        for tile in tiles + self.public_space:
+            if tile.value not in groups:
+                groups[tile.value] = {tile.color}
+            groups[tile.value].add(tile.color)
+        for g in groups:
+            if len(groups[g]) > 2:
+                blocks.append([Tile(g,c) for c in groups[g]])
+        return blocks
+
+    def possible_runs(self,tiles):
+        """Indentify possible runs from available tiles"""
+        # This method has problems, but will fix later
+        blocks = []
+        runs = {}
+        #tiles = [Tile(3,'Red'),Tile(1,'Red'),Tile(4,'Red'),Tile(5,'Red'),Tile(6,'Red'),Tile(9,'Black'),Tile(10,'Black'),Tile(8,'Black')]
+        for tile in tiles + self.public_space:
+            if tile.color not in runs:
+                runs[tile.color] = {tile.value}
+            runs[tile.color].add(tile.value)
+        for r in runs:
+            rn = list(runs[r])
+            rn.sort()
+            holder = [rn.pop()]
+            while rn:
+                if rn[-1] + 1 == holder[-1]:
+                    holder.append(rn.pop())
+                    if len(holder) > 2:
+                        srun = [Tile(v,r) for v in holder]
+                        srun.reverse()
+                        blocks.append(srun)
+                else:
+                    holder = [rn.pop()]
+        return blocks
+
+    def brute_force(self,hand):
+        available = hand + self.public
+        for block in combinations(available,3):
+            if self.validate_block(block):
+                print block
+
+    def validate_group(self,group):
+        pass
 
     def validate_block(self,block):
-        """Validate block of tiles as straight flush or as same value color combination"""
+        """Validate block of tiles as a run(straight flush) or group(same value color combination)"""
         if len(block) < 3:
             return False
         vals = []
@@ -68,22 +113,21 @@ class Rummikub:
         self.values = {x + 1 for x in range(13)}
         self.instances = 2 
         tiles = []
-        for i in range(self.instances):
-            for v in self.values:
-                for c in self.colors:
-                    tiles.append(Tile(v,c,i + 1))
-            tiles.append(Tile(0,'Wild',i + 1))
-        self.tiles = set(tiles)
+        for v in self.values:
+            for c in self.colors:
+                tiles.append(Tile(v,c))
+        tiles.append(Tile(0,'Wild'))
+        self.tiles = self.instances * tiles
+        random.shuffle(self.tiles)
 
 def main():
-    t = False
-    while not t:
-        g = Rummikub()
-        g.deal()
-        #p = random.sample(g.player_hands['1'],3)
-        block = Block('straight',random.sample(g.player_hands['1'],3))
-        t = g.validate_block(block[1])
-    print block
+    g = Rummikub()
+    g.deal()
+    print g.possible_groups(g.player_hands['1'])
+    print g.possible_runs(g.player_hands['1'])
+    print g.possible_groups(g.player_hands['2'])
+    print g.possible_runs(g.player_hands['2'])
+    #g.validate_block()
     
 if __name__ == '__main__':
     main()
