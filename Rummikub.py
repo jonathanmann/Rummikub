@@ -16,7 +16,7 @@ class Rummikub:
         tiles (list): available tiles
         player_hands (dict): tile sets in each player's possession
     """
-    def __init__(self,players=['1','2']):
+    def __init__(self,players=['1','2','3']):
         self.players = players
         random.shuffle(self.players)
         self.make_tiles()
@@ -35,7 +35,7 @@ class Rummikub:
         tile = self.tiles.pop()
         self.player_hands[player].append(tile)
 
-    def possible_groups(self,tiles):
+    def check_groups(self,tiles):
         """Indentify possible groups from available tiles"""
         blocks = []
         groups = {}
@@ -48,7 +48,7 @@ class Rummikub:
                 blocks.append([Tile(g,c) for c in groups[g]])
         return blocks
 
-    def possible_runs(self,tiles):
+    def check_runs(self,tiles):
         """Indentify possible runs from available tiles"""
         # This method has problems, but will fix later
         blocks = []
@@ -68,6 +68,8 @@ class Rummikub:
                     if len(holder) > 2:
                         srun = [Tile(v,r) for v in holder]
                         srun.reverse()
+                        if len(srun) > 3:
+                            blocks.pop() # get rid of subsection
                         blocks.append(srun)
                 else:
                     holder = [rn.pop()]
@@ -78,9 +80,6 @@ class Rummikub:
         for block in combinations(available,3):
             if self.validate_block(block):
                 print block
-
-    def validate_group(self,group):
-        pass
 
     def validate_block(self,block):
         """Validate block of tiles as a run(straight flush) or group(same value color combination)"""
@@ -123,10 +122,12 @@ class Rummikub:
 def main():
     g = Rummikub()
     g.deal()
-    print g.possible_groups(g.player_hands['1'])
-    print g.possible_runs(g.player_hands['1'])
-    print g.possible_groups(g.player_hands['2'])
-    print g.possible_runs(g.player_hands['2'])
+    print g.check_groups(g.player_hands['1'])
+    print g.check_runs(g.player_hands['1'])
+    print g.check_groups(g.player_hands['2'])
+    print g.check_runs(g.player_hands['2'])
+    print g.check_groups(g.player_hands['3'])
+    print g.check_runs(g.player_hands['3'])
     #g.validate_block()
     
 if __name__ == '__main__':
