@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from collections import namedtuple
+from collections import Counter
 import random
 from itertools import combinations
 
@@ -19,8 +20,10 @@ class Rummikub:
     def __init__(self,players=['1','2','3']):
         self.players = players
         random.shuffle(self.players)
+        self.flatten = lambda x: [e for block in x for e in block]
         self.make_tiles()
         self.public_space = []
+        self.winner = None
 
     def deal(self,tile_count=14):
         """Deal the appropriate number of tiles to each player"""
@@ -32,14 +35,58 @@ class Rummikub:
 
     def draw(self,player):
         """Draw a tile if unable or unwilling to play"""
-        tile = self.tiles.pop()
-        self.player_hands[player].append(tile)
+        try:
+            tile = self.tiles.pop()
+            self.player_hands[player].append(tile)
+        except:
+            print("No more tiles")
+
+
+    def play(self,player):
+        """Naive play"""
+        hand = self.player_hands[player]
+        starting_tiles = len(hand)
+        public_holder = []
+        tiles = hand + self.flatten(self.public_space)
+        possible_groups = self.check_groups(tiles)
+        possible_runs = self.check_runs(tiles)
+        groups = self.flatten(possible_groups)
+        runs = self.flatten(possible_runs)
+        tx = Counter(tiles)
+        gps = Counter(groups)
+        rns = Counter(runs) 
+        play_groups = tx - gps
+        play_runs = tx - rns
+
+        groups_strategy = sum(play_groups.values())
+        runs_strategy = sum(play_runs.values())
+
+        if groups_strategy < runs_strategy:
+            self.public_space = possible_groups
+            self.player_hands[player] = list(play_groups)
+
+        else:
+            self.public_space = possible_runs
+            self.player_hands[player] = list(play_runs)
+
+        ending_tiles = len(self.player_hands[player])
+
+        if ending_tiles >= starting_tiles:
+            self.draw(player)
+
+        if ending_tiles == 0:
+            self.winner = player
+            print("Player",player,'wins')
+
+        print("Player:",player,"starting_hand:",starting_tiles,"ending_hand",ending_tiles)
+        
+
 
     def check_groups(self,tiles):
         """Indentify possible groups from available tiles"""
         blocks = []
         groups = {}
-        for tile in tiles + self.public_space:
+        for tile in tiles:
             if tile.value not in groups:
                 groups[tile.value] = {tile.color}
             groups[tile.value].add(tile.color)
@@ -54,7 +101,7 @@ class Rummikub:
         blocks = []
         runs = {}
         #tiles = [Tile(3,'Red'),Tile(1,'Red'),Tile(4,'Red'),Tile(5,'Red'),Tile(6,'Red'),Tile(9,'Black'),Tile(10,'Black'),Tile(8,'Black')]
-        for tile in tiles + self.public_space:
+        for tile in tiles:
             if tile.color not in runs:
                 runs[tile.color] = {tile.value}
             runs[tile.color].add(tile.value)
@@ -75,11 +122,6 @@ class Rummikub:
                     holder = [rn.pop()]
         return blocks
 
-    def brute_force(self,hand):
-        available = hand + self.public
-        for block in combinations(available,3):
-            if self.validate_block(block):
-                print block
 
     def validate_block(self,block):
         """Validate block of tiles as a run(straight flush) or group(same value color combination)"""
@@ -122,13 +164,12 @@ class Rummikub:
 def main():
     g = Rummikub()
     g.deal()
-    print g.check_groups(g.player_hands['1'])
-    print g.check_runs(g.player_hands['1'])
-    print g.check_groups(g.player_hands['2'])
-    print g.check_runs(g.player_hands['2'])
-    print g.check_groups(g.player_hands['3'])
-    print g.check_runs(g.player_hands['3'])
-    #g.validate_block()
+    
+    while g.winner is None and g.tiles:
+        for player in g.players:
+            g.play(player)
+            if g.winner:
+                break
     
 if __name__ == '__main__':
     main()
