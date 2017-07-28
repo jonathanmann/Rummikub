@@ -17,7 +17,7 @@ class Rummikub:
         tiles (list): available tiles
         player_hands (dict): tile sets in each player's possession
     """
-    def __init__(self,players=['1','2','3']):
+    def __init__(self,players=['1','2','3','4']):
         self.players = players
         random.shuffle(self.players)
         self.flatten = lambda x: [e for block in x for e in block]
@@ -41,44 +41,47 @@ class Rummikub:
         except:
             print("No more tiles")
 
+    def play_strat(self,fn,tiles):
+        tiles = tiles + []
+        tx = Counter(tiles)
+        possible_blocks = fn(tiles)
+        blocks = self.flatten(possible_blocks)
+        bks = Counter(blocks)
+        tx = tx - bks
+        tiles = list(tx)
+        return tiles,possible_blocks
 
     def play(self,player):
         """Naive play"""
         hand = self.player_hands[player]
         starting_tiles = len(hand)
         public_holder = []
-        tiles = hand + self.flatten(self.public_space)
-        possible_groups = self.check_groups(tiles)
-        possible_runs = self.check_runs(tiles)
-        groups = self.flatten(possible_groups)
-        runs = self.flatten(possible_runs)
-        tx = Counter(tiles)
-        gps = Counter(groups)
-        rns = Counter(runs) 
-        play_groups = tx - gps
-        play_runs = tx - rns
+        p_tiles = hand + self.flatten(self.public_space)
 
-        groups_strategy = sum(play_groups.values())
-        runs_strategy = sum(play_runs.values())
+        tiles,r_runs = self.play_strat(self.check_runs,p_tiles)
+        r_tiles,r_groups = self.play_strat(self.check_groups,tiles)
+        
+        tiles,g_groups = self.play_strat(self.check_groups,p_tiles)
+        g_tiles,g_runs = self.play_strat(self.check_runs,tiles)
 
-        if groups_strategy < runs_strategy:
-            self.public_space = possible_groups
-            self.player_hands[player] = list(play_groups)
-
+        if len(r_tiles) < len(g_tiles):
+            self.public_space = r_groups + r_runs
+            self.player_hands[player] = r_tiles
         else:
-            self.public_space = possible_runs
-            self.player_hands[player] = list(play_runs)
+            self.public_space = g_groups + g_runs
+            self.player_hands[player] = g_tiles
 
         ending_tiles = len(self.player_hands[player])
 
         if ending_tiles >= starting_tiles:
+            print("Player",player,'draws a tile...')
             self.draw(player)
+        else:
+            print("Player:",player,"starting_hand:",starting_tiles,"ending_hand",ending_tiles)
 
         if ending_tiles == 0:
             self.winner = player
             print("Player",player,'wins')
-
-        print("Player:",player,"starting_hand:",starting_tiles,"ending_hand",ending_tiles)
         
 
 
@@ -169,6 +172,9 @@ def main():
         for player in g.players:
             g.play(player)
             if g.winner:
+                break
+            if len(g.tiles) == 0:
+                print('Out of tiles!')
                 break
     
 if __name__ == '__main__':
