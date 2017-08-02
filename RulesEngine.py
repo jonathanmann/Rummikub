@@ -6,9 +6,9 @@ from itertools import combinations
 
 Tile = namedtuple('Tile','value color')
 
-class Rummikub:
+class RulesEngine:
     """
-    Implementation of Rummikub for testing strategy bots
+    Implementation of a Rummikub rules engine for testing strategy bots
 
     Attributes:
         colors (set): possible colors for a tile
@@ -165,7 +165,7 @@ class Rummikub:
         random.shuffle(self.tiles)
 
 def main():
-    g = Rummikub()
+    g = RulesEngine()
     g.deal()
     
     while g.winner is None and g.tiles:
