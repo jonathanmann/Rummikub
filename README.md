@@ -10,20 +10,20 @@ To play, clone this repository and create a new bot by inheriting from the BaseB
 
 For the purposes of this tournament, the rules of this game have been simplified. The object of the game is to get rid of all your tiles. In each round, there is only one winner and the losers will not be penalized for the tiles they hold after someone wins. The rules this tournament will follow are implemented in the RulesEngine class.
 
-### Play order is randomly assigned.
+#### Play order is randomly assigned.
 
-### Each player is dealt 14 tiles.
+#### Each player is dealt 14 tiles.
 
-### The first player to get rid of all their tiles wins.
+#### The first player to get rid of all their tiles wins.
 
-### Players get rid of tiles by playing groups or runs and putting them into the public space.
+#### Players get rid of tiles by playing groups or runs and putting them into the public space.
 
-### A group is a collection of three or more tiles of differing colors, but the same numerical value.
+#### A group is a collection of three or more tiles of differing colors, but the same numerical value.
 
-### A run is a collection of three or more tiles of the same color and in sequential order. For example, an all red 2,3,4 would be valid, but an all red 2,3,3,4 would be invalid. Simpilarly, an all blue 4,5,6 would be valid, but an all blue 3,5,6 would be invalid.
+#### A run is a collection of three or more tiles of the same color and in sequential order. For example, an all red 2,3,4 would be valid, but an all red 2,3,3,4 would be invalid. Simpilarly, an all blue 4,5,6 would be valid, but an all blue 3,5,6 would be invalid.
 
-### A player may rearrange tiles in the public space or take tiles out of the public space into their hand as long as all collections in the public space are valid at the end of the player's turn.
+#### A player may rearrange tiles in the public space or take tiles out of the public space into their hand as long as all collections in the public space are valid at the end of the player's turn.
 
-### If a player does not end up with few tiles in their hand than when they began, they must draw a tile.
+#### If a player does not end up with few tiles in their hand than when they began, they must draw a tile.
 
-These rules may change, but as bugs are discovered in the rules engine.
+These rules may change as bugs are discovered in the rules engine, but the general idea will stay the same.
