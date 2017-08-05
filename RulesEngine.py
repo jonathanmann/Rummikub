@@ -4,7 +4,9 @@ import random
 
 from bots.SampleBot import SampleBot
 
+
 Tile = namedtuple('Tile','value color')
+bots = [SampleBot('1'),SampleBot('2'),SampleBot('3'),SampleBot('4')]
 
 class RulesEngine:
     """
@@ -15,47 +17,43 @@ class RulesEngine:
         values (set): possible numbers for a tile
         instances (int): number of tile instances
         tiles (list): available tiles
-        player_hands (dict): tile sets in each player's possession
+        bots (list): bots playing in the tournament
     """
-    def __init__(self,players=['1','2','3','4']):
-        self.players = players
-        random.shuffle(self.players)
+    def __init__(self,bots):
+        self.bots = bots
+        random.shuffle(self.bots)
         self.make_tiles()
         self.public_space = []
         self.winner = None
 
     def deal(self,tile_count=14):
-        """Deal the appropriate number of tiles to each player"""
-        self.player_hands = {}
-        for p in self.players:
+        """Deal the appropriate number of tiles to each bot"""
+        for b in self.bots:
             hand = self.tiles[-tile_count:]
             self.tiles = self.tiles[:-tile_count]
-            self.player_hands[p] = hand
+            b.hand = hand
 
-    def draw(self,player):
+    def draw(self,bot):
         """Draw a tile if unable or unwilling to play"""
         try:
             tile = self.tiles.pop()
-            self.player_hands[player].append(tile)
+            bot.hand.append(tile)
         except:
             print("No more tiles")
 
-    def play(self,player):
+    def play(self,bot):
         """Test bot strategy"""
-        s = SampleBot()
-        s.hand = self.player_hands[player]
-        self.public_space = s.play(self.public_space)
-        self.player_hands[player] = s.hand
+        self.public_space = bot.play(self.public_space)
 
-        if s.ending_tiles >= s.starting_tiles:
-            print("Player",player,'draws a tile...')
-            self.draw(player)
+        if bot.ending_tiles >= bot.starting_tiles:
+            print("Player",bot.name,'draws a tile...')
+            self.draw(bot)
         else:
-            print("Player:",player,"starting_hand:",s.starting_tiles,"ending_hand",s.ending_tiles)
+            print("Player:",bot.name,"starting_hand:",bot.starting_tiles,"ending_hand",bot.ending_tiles)
 
-        if s.ending_tiles == 0:
-            self.winner = player
-            print("Player",player,'wins')
+        if bot.ending_tiles == 0:
+            self.winner = bot.name
+            print("Player",bot.name,'wins')
         
 
     def validate_block(self,block):
@@ -89,12 +87,12 @@ class RulesEngine:
         random.shuffle(self.tiles)
 
 def main():
-    g = RulesEngine()
+    g = RulesEngine(bots)
     g.deal()
     
     while g.winner is None and g.tiles:
-        for player in g.players:
-            g.play(player)
+        for b in g.bots:
+            g.play(b)
             if g.winner:
                 break
             if len(g.tiles) == 0:

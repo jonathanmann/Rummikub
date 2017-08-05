@@ -9,8 +9,9 @@ class BaseBot(object):
         hand (list): tiles in player's hand; assigned by the rules engine
         public_space (list): bot's copy of the public space consisting of blocks of tiles
     """
-    def __init__(self):
+    def __init__(self,name=None):
         self.Tile = namedtuple('Tile','value color')
+        self.name = name
         self.hand = None
         self.starting_tiles = 0
         self.ending_tiles = 0
@@ -36,6 +37,7 @@ class BaseBot(object):
             if tile.color not in runs:
                 runs[tile.color] = {tile.value}
             runs[tile.color].add(tile.value)
+
         for r in runs:
             rn = list(runs[r])
             rn.sort()
