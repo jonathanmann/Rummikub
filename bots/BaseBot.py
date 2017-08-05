@@ -9,19 +9,19 @@ class BaseBot(object):
         hand (list): tiles in player's hand; assigned by the rules engine
         public_space (list): bot's copy of the public space consisting of blocks of tiles
     """
-    def __init__(self,hand,public_space):
+    def __init__(self):
         self.Tile = namedtuple('Tile','value color')
-        self.hand = hand
-        self.public_space = public_space
+        self.hand = None
         self.starting_tiles = 0
         self.ending_tiles = 0
 
-    def play(self):
+    def play(self,public_space):
         """Play turn"""
         self.flatten = lambda x: [e for block in x for e in block]
         self.starting_tiles = len(self.hand)
-        self.secret_strategy()
+        public_space = self.secret_strategy(public_space)
         self.ending_tiles = len(self.hand)
+        return public_space
 
     def secret_strategy(self):
         """Implement top secret strategy"""

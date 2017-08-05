@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 from collections import namedtuple
-from collections import Counter
 import random
-from itertools import combinations
 
 from bots.SampleBot import SampleBot
-
 
 Tile = namedtuple('Tile','value color')
 
@@ -45,10 +42,10 @@ class RulesEngine:
 
     def play(self,player):
         """Test bot strategy"""
-        s = SampleBot(self.player_hands[player],self.public_space)
-        s.play()
+        s = SampleBot()
+        s.hand = self.player_hands[player]
+        self.public_space = s.play(self.public_space)
         self.player_hands[player] = s.hand
-        self.public_space = s.public_space
 
         if s.ending_tiles >= s.starting_tiles:
             print("Player",player,'draws a tile...')

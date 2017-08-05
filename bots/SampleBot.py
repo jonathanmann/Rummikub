@@ -3,10 +3,10 @@ from collections import Counter
 
 class SampleBot(BaseBot):
     """Sample Bot"""
-    def secret_strategy(self):
+    def secret_strategy(self,public_space):
         """Naive play"""
         hand = self.hand
-        p_tiles = hand + self.flatten(self.public_space)
+        p_tiles = hand + self.flatten(public_space)
 
         tiles,r_runs = self.play_strat(self.check_runs,p_tiles)
         r_tiles,r_groups = self.play_strat(self.check_groups,tiles)
@@ -15,11 +15,12 @@ class SampleBot(BaseBot):
         g_tiles,g_runs = self.play_strat(self.check_runs,tiles)
 
         if len(r_tiles) < len(g_tiles):
-            self.public_space = r_groups + r_runs
+            public_space = r_groups + r_runs
             self.hand = r_tiles
         else:
-            self.public_space = g_groups + g_runs
+            public_space = g_groups + g_runs
             self.hand = g_tiles
+        return public_space
         
     def play_strat(self,fn,tiles):
         tiles = tiles + []
