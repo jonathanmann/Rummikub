@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from collections import namedtuple
 import random
+import sys
 
 from bots.SampleBot import SampleBot
 
@@ -44,12 +45,17 @@ class RulesEngine:
     def play(self,bot):
         """Test bot strategy"""
         self.public_space = bot.play(self.public_space)
+        for block in self.public_space:
+            if not self.validate_block(block):
+                print("%s is disqualified for returning an illegal configuration" % bot.name)
+                sys.exit()
 
         if bot.ending_tiles >= bot.starting_tiles:
-            print("Player",bot.name,'draws a tile...')
+            print("Player %s draws a tile." % bot.name)
             self.draw(bot)
         else:
-            print("Player:",bot.name,"starting_hand:",bot.starting_tiles,"ending_hand",bot.ending_tiles)
+            print("Player: %s, starting_hand: %s, ending_tiles: %s." % (bot.name, str(bot.starting_tiles), str(bot.ending_tiles)))
+            pass
 
         if bot.ending_tiles == 0:
             self.winner = bot.name
