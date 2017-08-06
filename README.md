@@ -1,6 +1,6 @@
 # Rummikub Bot Tournament
 
-[Rummikub](https://en.wikipedia.org/wiki/Rummikub) is a tile based startegy game. The purpose of this tournament is to create a bot that will defeat all others in a 1000 game Rummikub championship. For the purposes of this competition the rules have been simplified. For further information on the rules, refer to the rules section below.
+[Rummikub](https://en.wikipedia.org/wiki/Rummikub) is a tile based startegy game. The purpose of this tournament is to create a bot that will defeat all others in a 1000 game Rummikub championship. For the purposes of this competition the rules have been simplified. For further information on the rules, refer to the [rules](#rules) section below.
 
 # Setup
 
@@ -12,18 +12,18 @@ For the purposes of this tournament, the rules of this game have been simplified
 
 #### Play order is randomly assigned.
 
-#### Each player is dealt 14 tiles.
+#### Each bot is dealt 14 tiles.
 
-#### The first player to get rid of all their tiles wins.
+#### The first bot to get rid of all their tiles wins.
 
 #### Players get rid of tiles by playing groups or runs and putting them into the public space.
 
 #### A group is a collection of three or more tiles of differing colors, but the same numerical value.
 
-#### A run is a collection of three or more tiles of the same color and in sequential order. For example, an all red 2,3,4 would be valid, but an all red 2,3,3,4 would be invalid. Simpilarly, an all blue 4,5,6 would be valid, but an all blue 3,5,6 would be invalid.
+#### A run is a collection of three or more tiles of the same color and in sequential order. For example, an all red 2,3,4 would be valid, but an all red 2,3,3,4 would be invalid. Similarly, an all blue 4,5,6 would be valid, but an all blue 3,5,6 would be invalid.
 
-#### A player may rearrange tiles in the public space or take tiles out of the public space into their hand as long as all collections in the public space are valid at the end of the player's turn.
+#### A bot may rearrange tiles in the public space or take tiles out of the public space into their hand as long as all collections in the public space are valid at the end of the bot's turn.
 
-#### If a player does not end up with few tiles in their hand than when they began, they must draw a tile.
+#### If a bot does not end up with few tiles in its hand than when it began, it must draw a tile.
 
 These rules may change as bugs are discovered in the rules engine, but the general idea will stay the same.
